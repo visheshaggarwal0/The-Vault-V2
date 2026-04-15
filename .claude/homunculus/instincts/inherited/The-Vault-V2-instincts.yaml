@@ -1,0 +1,321 @@
+# Instincts generated from https://github.com/visheshaggarwal0/The-Vault-V2
+# Generated: 2026-04-15T20:46:45.978Z
+# Version: 2.0
+# NOTE: This file supplements (does not replace) any existing curated instincts.
+# High-confidence manually curated instincts should be preserved alongside these.
+
+---
+id: The-Vault-V2-commit-length
+trigger: "when writing a commit message"
+confidence: 0.6
+domain: git
+source: repo-analysis
+source_repo: https://github.com/visheshaggarwal0/The-Vault-V2
+---
+
+# The Vault V2 Commit Length
+
+## Action
+
+Keep commit messages concise (~28 characters)
+
+## Evidence
+
+- Average commit message length: 28 chars
+- Based on 5 commits
+
+---
+id: The-Vault-V2-naming-files
+trigger: "when creating a new file"
+confidence: 0.8
+domain: code-style
+source: repo-analysis
+source_repo: https://github.com/visheshaggarwal0/The-Vault-V2
+---
+
+# The Vault V2 Naming Files
+
+## Action
+
+Use camelCase naming convention
+
+## Evidence
+
+- Analyzed file naming patterns in repository
+- Dominant pattern: camelCase
+
+---
+id: The-Vault-V2-import-relative
+trigger: "when importing modules"
+confidence: 0.75
+domain: code-style
+source: repo-analysis
+source_repo: https://github.com/visheshaggarwal0/The-Vault-V2
+---
+
+# The Vault V2 Import Relative
+
+## Action
+
+Use relative imports for project files
+
+## Evidence
+
+- Import analysis shows relative import pattern
+- Example: import { x } from '../lib/x'
+
+---
+id: The-Vault-V2-export-style
+trigger: "when exporting from a module"
+confidence: 0.7
+domain: code-style
+source: repo-analysis
+source_repo: https://github.com/visheshaggarwal0/The-Vault-V2
+---
+
+# The Vault V2 Export Style
+
+## Action
+
+Prefer named exports
+
+## Evidence
+
+- Export pattern analysis
+- Dominant style: named
+
+---
+id: The-Vault-V2-test-separate
+trigger: "when writing tests"
+confidence: 0.8
+domain: testing
+source: repo-analysis
+source_repo: https://github.com/visheshaggarwal0/The-Vault-V2
+---
+
+# The Vault V2 Test Separate
+
+## Action
+
+Place tests in the tests/ or __tests__/ directory, mirroring src structure
+
+## Evidence
+
+- Separate test directory pattern detected
+- Tests live in dedicated test folders
+
+---
+id: The-Vault-V2-workflow-update-index-html-with-image-assets
+trigger: "when doing update index html with image assets"
+confidence: 0.6
+domain: workflow
+source: repo-analysis
+source_repo: https://github.com/visheshaggarwal0/The-Vault-V2
+---
+
+# The Vault V2 Workflow Update Index Html With Image Assets
+
+## Action
+
+Follow the update-index-html-with-image-assets workflow:
+1. Add or update image files in the images/ directory.
+2. Edit index.html to reference the new or updated images.
+
+## Evidence
+
+- Workflow detected from commit patterns
+- Frequency: ~2x per month
+- Files: images/*.jpg, index.html
+
+---
+id: the-vault-v2-instinct-file-naming
+trigger: "When creating or renaming a file"
+confidence: 0.8
+domain: code-style
+source: repo-analysis
+source_repo: visheshaggarwal0/The-Vault-V2
+---
+
+# The Vault V2 Instinct File Naming
+
+## Action
+
+Name the file using camelCase (e.g., myComponent.ts)
+
+## Evidence
+
+- Pattern in codeStyle.namingConventions.files
+
+---
+id: the-vault-v2-instinct-function-naming
+trigger: "When defining a function"
+confidence: 0.8
+domain: code-style
+source: repo-analysis
+source_repo: visheshaggarwal0/The-Vault-V2
+---
+
+# The Vault V2 Instinct Function Naming
+
+## Action
+
+Name the function using camelCase (e.g., fetchData)
+
+## Evidence
+
+- Pattern in codeStyle.namingConventions.functions
+
+---
+id: the-vault-v2-instinct-class-naming
+trigger: "When defining a class"
+confidence: 0.8
+domain: code-style
+source: repo-analysis
+source_repo: visheshaggarwal0/The-Vault-V2
+---
+
+# The Vault V2 Instinct Class Naming
+
+## Action
+
+Name the class using PascalCase (e.g., GameManager)
+
+## Evidence
+
+- Pattern in codeStyle.namingConventions.classes
+
+---
+id: the-vault-v2-instinct-constant-naming
+trigger: "When defining a constant"
+confidence: 0.8
+domain: code-style
+source: repo-analysis
+source_repo: visheshaggarwal0/The-Vault-V2
+---
+
+# The Vault V2 Instinct Constant Naming
+
+## Action
+
+Name the constant using SCREAMING_SNAKE_CASE (e.g., MAX_SCORE)
+
+## Evidence
+
+- Pattern in codeStyle.namingConventions.constants
+
+---
+id: the-vault-v2-instinct-import-style
+trigger: "When importing modules"
+confidence: 0.8
+domain: code-style
+source: repo-analysis
+source_repo: visheshaggarwal0/The-Vault-V2
+---
+
+# The Vault V2 Instinct Import Style
+
+## Action
+
+Use relative import paths (e.g., import x from './module')
+
+## Evidence
+
+- Pattern in codeStyle.importStyle
+
+---
+id: the-vault-v2-instinct-export-style
+trigger: "When exporting functions or variables"
+confidence: 0.8
+domain: code-style
+source: repo-analysis
+source_repo: visheshaggarwal0/The-Vault-V2
+---
+
+# The Vault V2 Instinct Export Style
+
+## Action
+
+Use named exports (e.g., export { myFunc })
+
+## Evidence
+
+- Pattern in codeStyle.exportStyle
+
+---
+id: the-vault-v2-instinct-test-location
+trigger: "When adding or updating tests"
+confidence: 0.7
+domain: testing
+source: repo-analysis
+source_repo: visheshaggarwal0/The-Vault-V2
+---
+
+# The Vault V2 Instinct Test Location
+
+## Action
+
+Place test files in a separate directory from source files
+
+## Evidence
+
+- Pattern in architecture.folderStructure.testLocation
+
+---
+id: the-vault-v2-instinct-commit-format-freeform
+trigger: "When writing a commit message"
+confidence: 0.8
+domain: git
+source: repo-analysis
+source_repo: visheshaggarwal0/The-Vault-V2
+---
+
+# The Vault V2 Instinct Commit Format Freeform
+
+## Action
+
+Use a short, freeform message without a prefix (e.g., 'Renamed Images folder to images')
+
+## Evidence
+
+- Pattern in commits.type
+- Examples in commits.examples
+
+---
+id: the-vault-v2-instinct-commit-length
+trigger: "When writing a commit message"
+confidence: 0.7
+domain: git
+source: repo-analysis
+source_repo: visheshaggarwal0/The-Vault-V2
+---
+
+# The Vault V2 Instinct Commit Length
+
+## Action
+
+Keep the commit message concise, around 28 characters on average
+
+## Evidence
+
+- Pattern in commits.averageLength
+
+---
+id: the-vault-v2-instinct-update-index-html-with-image-assets
+trigger: "When someone adds or updates game images and needs them displayed on the main page"
+confidence: 0.9
+domain: workflow
+source: repo-analysis
+source_repo: visheshaggarwal0/The-Vault-V2
+---
+
+# The Vault V2 Instinct Update Index Html With Image Assets
+
+## Action
+
+Add or update image files in the images/ directory, then edit index.html to reference the new or updated images
+
+## Evidence
+
+- Workflow: update-index-html-with-image-assets
+- Example commits: 'Add or update image files in the images/ directory.', 'Edit index.html to reference the new or updated images.'
+

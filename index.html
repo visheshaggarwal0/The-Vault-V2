@@ -3,708 +3,865 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Game Top-Up Center</title>
+    <title>The Vault | Premium Game Top-Up</title>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='gold' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%23f59e0b;stop-opacity:1' /%3E%3Cstop offset='100%25' style='stop-color:%23d97706;stop-opacity:1' /%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='32' height='32' rx='8' fill='%230a0b0d'/%3E%3Cpath d='M16 6 L24 9 V16 C24 21 16 24 16 24 C16 24 8 21 8 16 V9 L16 6 Z' fill='url(%23gold)'/%3E%3Ccircle cx='16' cy='14' r='2' fill='%230a0b0d'/%3E%3Crect x='15.5' y='16' width='1' height='3' rx='0.5' fill='%230a0b0d'/%3E%3C/svg%3E">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
     <style>
         :root {
-            --primary-bg: #0F172A; /* Deep Slate Blue */
-            --secondary-bg: #1E293B; /* Lighter Slate Blue */
-            --accent-color: #FBBF24; /* Amber/Gold */
-            --text-color: #E2E8F0; /* Light Slate Gray */
-            --subtle-text-color: #94A3B8; /* Medium Slate Gray */
-            --card-border: #334155; /* Darker Slate */
-            --success-color: #22C55E; /* Green */
-            --error-color: #F44336; /* Red */
+            --bg-dark: #0a0b0d;
+            --bg-surface: #121417;
+            --bg-card: rgba(22, 24, 28, 0.85);
+            --accent-primary: #f59e0b;
+            --accent-secondary: #d97706;
+            --accent-glow: rgba(245, 158, 11, 0.4);
+            --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
+            --border: rgba(255, 255, 255, 0.08);
+            --glass-blur: blur(32px);
+            --success: #10b981;
+            --error: #ef4444;
+            --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
         }
 
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
+            -webkit-font-smoothing: antialiased;
         }
 
         body {
-            font-family: 'Poppins', sans-serif;
-            background-color: var(--primary-bg);
-            color: var(--text-color);
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
             min-height: 100vh;
-            padding: 20px;
-        }
-
-        .container {
-            width: 100%;
-            max-width: 800px;
-            background-color: var(--secondary-bg);
-            border-radius: 20px;
-            padding: 2rem;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
-            border: 1px solid var(--card-border);
-            transition: all 0.3s ease-in-out;
-        }
-
-        h1, h2 {
-            text-align: center;
-            letter-spacing: 1px;
-            margin-bottom: 2rem;
-        }
-
-        h1 {
-            font-size: 2.5rem;
-            color: var(--text-color);
-            font-weight: 700;
-        }
-        
-        h2 {
-            font-size: 1.8rem;
-            color: var(--accent-color);
-            font-weight: 500;
-        }
-        
-        /* Page Styles */
-        .page {
-            display: none; /* Hidden by default */
-        }
-        .page.active {
-            display: block;
-            animation: fadeIn 0.5s ease-in-out;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        /* Game Selection Page */
-        .game-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
-        }
-
-        .game-card {
-            background-size: cover;
-            background-position: center;
-            border-radius: 15px;
-            aspect-ratio: 16 / 9; /* Landscape aspect ratio */
             display: flex;
-            align-items: flex-end;
-            padding: 1rem;
-            position: relative;
-            overflow: hidden;
-            cursor: pointer;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            border: 2px solid var(--card-border);
-        }
-
-        .game-card:hover {
-            transform: scale(1.05);
-            box-shadow: 0 0 25px rgba(251, 191, 36, 0.3);
-            border-color: var(--accent-color);
-        }
-
-        .game-card::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(to top, rgba(0,0,0,0.8) 10%, rgba(0,0,0,0) 70%);
-        }
-
-        .game-card .game-title {
-            position: relative;
-            z-index: 2;
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: white;
-            text-shadow: 0 2px 5px rgba(0,0,0,0.7);
-        }
-
-        /* Purchase Page */
-        .currency-options {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 1rem;
-            margin-bottom: 2rem;
-        }
-
-        .currency-option {
-            background-color: var(--primary-bg);
-            border: 2px solid var(--card-border);
-            border-radius: 10px;
-            padding: 1rem;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .currency-option:hover {
-            border-color: var(--accent-color);
-            background-color: #2a3a4a;
-        }
-
-        .currency-option.selected {
-            border-color: var(--accent-color);
-            box-shadow: 0 0 15px rgba(251, 191, 36, 0.4);
-            background-color: #2a3a4a;
-        }
-
-        .currency-amount {
-            font-size: 1.2rem;
-            font-weight: bold;
-            color: var(--accent-color);
-        }
-
-        .currency-price {
-            font-size: 0.9rem;
-            margin-top: 0.5rem;
-            color: var(--subtle-text-color);
-        }
-
-        #payment-form {
-            display: none; /* Initially hidden */
-            animation: fadeIn 0.5s;
-        }
-        
-        .form-grid {
-            display: grid;
-            gap: 1.5rem;
-        }
-
-        .form-group {
-            display: flex;
-            flex-direction: column;
-        }
-        
-        .form-row {
-            display: flex;
-            gap: 1.5rem;
-        }
-        
-        .form-row .form-group {
-            flex: 1;
-        }
-
-        .form-group label {
-            margin-bottom: 0.5rem;
-            font-size: 0.9rem;
-            letter-spacing: 1px;
-            color: var(--subtle-text-color);
-        }
-
-        .form-group input {
-            background-color: var(--primary-bg);
-            border: 2px solid var(--card-border);
-            color: var(--text-color);
-            border-radius: 8px;
-            padding: 0.8rem 1rem;
-            font-family: 'Poppins', sans-serif;
-            font-size: 1rem;
-            transition: border-color 0.3s ease;
-        }
-
-        .form-group input:focus {
-            outline: none;
-            border-color: var(--accent-color);
-        }
-
-        .pay-button {
-            background: var(--accent-color);
-            color: #111;
-            border: none;
-            padding: 1rem;
-            border-radius: 8px;
-            font-family: 'Poppins', sans-serif;
-            font-size: 1.1rem;
-            font-weight: 700;
-            cursor: pointer;
-            transition: transform 0.2s ease, box-shadow 0.3s ease, background-color 0.3s ease;
-            margin-top: 1rem;
-            width: 100%;
-        }
-
-        .pay-button:hover {
-            transform: translateY(-2px);
-            background-color: #fca510;
-            box-shadow: 0 0 20px rgba(251, 191, 36, 0.4);
-        }
-        
-        /* Status Page */
-        .status-container {
-            text-align: center;
-            padding: 2rem 0;
-            position: relative;
-        }
-
-        #status-success {
-            overflow: hidden; /* Contain the confetti */
-        }
-
-        .loader {
-            border: 8px solid var(--card-border);
-            border-top: 8px solid var(--accent-color);
-            border-radius: 50%;
-            width: 80px;
-            height: 80px;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 2rem;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        
-        .status-message {
-            font-size: 1.4rem;
-            letter-spacing: 1px;
-            color: var(--text-color);
-            margin-bottom: 0.5rem;
-        }
-        
-        .key-container {
-            display: flex;
-            align-items: center;
             justify-content: center;
-            background-color: var(--primary-bg);
-            border-radius: 8px;
-            padding: 0.5rem;
-            margin: 1.5rem auto;
-            max-width: 500px;
-            border: 1px solid var(--card-border);
-            transition: box-shadow 0.3s ease;
+            align-items: center;
+            overflow-x: hidden;
+            line-height: 1.5;
         }
 
-        .key-container.glow {
-            animation: glow 1.5s infinite alternate;
-        }
+        h1, h2, h3 { font-family: 'Outfit', sans-serif; }
 
-        @keyframes glow {
-            from {
-                box-shadow: 0 0 5px rgba(251, 191, 36, 0.2), 0 0 10px rgba(251, 191, 36, 0.3);
-            }
-            to {
-                box-shadow: 0 0 20px rgba(251, 191, 36, 0.5), 0 0 30px rgba(251, 191, 36, 0.4);
-            }
-        }
-
-        #redemption-key {
-            flex-grow: 1;
-            font-family: monospace;
-            font-size: 1.1rem;
-            color: var(--accent-color);
-            text-align: center;
-            word-break: break-all;
-            padding: 0 0.5rem;
-        }
-        
-        #copy-key-button {
-            background-color: var(--accent-color);
-            color: #111;
-            border: none;
-            border-radius: 5px;
-            padding: 0.7rem 1.2rem;
-            font-family: 'Poppins', sans-serif;
-            font-weight: 500;
-            cursor: pointer;
-            transition: background-color 0.2s;
-        }
-        #copy-key-button:hover {
-            background-color: #fca510;
-        }
-
-        .back-button {
-            background-color: transparent;
-            border: 2px solid var(--accent-color);
-            color: var(--accent-color);
-            padding: 0.75rem 1.5rem;
-            border-radius: 8px;
-            font-family: 'Poppins', sans-serif;
-            font-size: 1rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: background-color 0.3s, color 0.3s;
-            margin-top: 2rem;
-        }
-
-        .back-button:hover {
-            background-color: var(--accent-color);
-            color: var(--primary-bg);
-        }
-        
-        @keyframes popIn {
-          0% { transform: scale(0.5); opacity: 0; }
-          70% { transform: scale(1.1); opacity: 1; }
-          100% { transform: scale(1); }
-        }
-        
-        /* Animated Checkmark SVG */
-        .checkmark {
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            display: block;
-            stroke-width: 4;
-            stroke: var(--success-color);
-            stroke-miterlimit: 10;
-            margin: 0 auto 1.5rem;
-            box-shadow: inset 0px 0px 0px var(--success-color);
-            animation: fill .4s ease-in-out .4s forwards, scale .3s ease-in-out .9s both;
-        }
-
-        .checkmark__circle {
-            stroke-dasharray: 166;
-            stroke-dashoffset: 166;
-            stroke-width: 4;
-            stroke-miterlimit: 10;
-            stroke: var(--success-color);
-            fill: none;
-            animation: stroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
-        }
-
-        .checkmark__check {
-            transform-origin: 50% 50%;
-            stroke-dasharray: 48;
-            stroke-dashoffset: 48;
-            stroke: var(--secondary-bg);
-            animation: stroke 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.8s forwards;
-        }
-
-        @keyframes stroke {
-            100% { stroke-dashoffset: 0; }
-        }
-
-        @keyframes scale {
-            0%, 100% { transform: none; }
-            50% { transform: scale3d(1.1, 1.1, 1); }
-        }
-
-        @keyframes fill {
-            100% { box-shadow: inset 0px 0px 0px 60px var(--success-color); }
-        }
-
-        /* Confetti styles */
-        .confetti-container {
-            position: absolute;
+        /* Background Canvas */
+        #bg-canvas {
+            position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            pointer-events: none;
-            z-index: 0;
+            z-index: -1;
+            background: #050505;
         }
 
-        .confetti {
-            width: 10px;
-            height: 10px;
-            background-color: var(--accent-color);
-            position: absolute;
-            top: -20px;
+        /* Layout */
+        .container {
+            width: 100%;
+            max-width: 1100px;
+            margin: 2rem auto;
+            padding: 0 1.5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Surfaces */
+        .surface {
+            background: var(--bg-card);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border: 1px solid var(--border);
+            border-radius: 28px;
+            padding: 3.5rem;
+            box-shadow: 0 40px 100px -20px rgba(0, 0, 0, 0.6);
+            overflow: hidden;
+        }
+
+        /* Typography */
+        .hero-title {
+            font-size: 4rem;
+            font-weight: 800;
+            text-align: center;
+            margin-bottom: 4rem;
+            letter-spacing: -0.04em;
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .hero-title span {
+            background: linear-gradient(135deg, #ffffff 0%, #9ca3af 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        h2 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        /* Page System */
+        .page {
+            display: none;
             opacity: 0;
-            animation: fall 5s linear infinite;
+            transform: scale(0.98);
         }
 
-        .confetti:nth-child(2n) {
-            background-color: var(--success-color);
-            width: 6px;
-            height: 12px;
+        .page.active {
+            display: block;
+            opacity: 1;
+            transform: scale(1);
         }
 
-        .confetti:nth-child(3n) { background-color: #38bdf8; }
-        .confetti:nth-child(4n) { background-color: #E2E8F0; }
+        /* Game Grid */
+        .game-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2.5rem;
+        }
 
-        @keyframes fall {
-            0% {
-                transform: translateY(0) rotate(0deg);
-                opacity: 1;
-            }
-            100% {
-                transform: translateY(120vh) rotate(720deg);
-                opacity: 0;
-            }
+        .game-card {
+            position: relative;
+            height: 240px;
+            border-radius: 24px;
+            overflow: hidden;
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            transition: transform 0.4s var(--ease-out), border-color 0.4s var(--ease-out), box-shadow 0.4s var(--ease-out);
+            cursor: pointer;
+        }
+
+        .game-card:hover {
+            transform: translateY(-8px);
+            border-color: var(--accent-primary);
+            box-shadow: 0 20px 40px -10px rgba(245, 158, 11, 0.25);
+        }
+
+        .game-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.6s var(--ease-out);
+            opacity: 0.8;
+        }
+
+        .game-card:hover .game-image {
+            transform: scale(1.08);
+            opacity: 1;
+        }
+
+        .game-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top, rgba(10, 11, 13, 0.95) 0%, rgba(10, 11, 13, 0.4) 50%, transparent 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 2rem;
+        }
+
+        .game-title {
+            font-size: 1.75rem;
+            font-weight: 800;
+            color: white;
+            letter-spacing: -0.01em;
+        }
+
+        .game-subtitle {
+            font-size: 0.8rem;
+            color: var(--accent-primary);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            margin-bottom: 0.25rem;
+        }
+
+        /* Purchase Flow */
+        .btn-back {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border);
+            color: var(--text-muted);
+            padding: 0.8rem 1.6rem;
+            border-radius: 14px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            transition: all 0.3s var(--ease-out);
+            margin-bottom: 2.5rem;
+            cursor: pointer;
+        }
+
+        .btn-back:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: #fff;
+            color: #fff;
+            transform: translateX(-4px);
+        }
+
+        .currency-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3.5rem;
+        }
+
+        .pack-card {
+            background: rgba(255, 255, 255, 0.025);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 2.5rem 1.5rem;
+            text-align: center;
+            transition: all 0.3s var(--ease-out);
+            cursor: pointer;
+        }
+
+        .pack-card:hover {
+            background: rgba(245, 158, 11, 0.05);
+            border-color: var(--accent-primary);
+            transform: translateY(-6px);
+        }
+
+        .pack-card.selected {
+            background: rgba(245, 158, 11, 0.1);
+            border-color: var(--accent-primary);
+            box-shadow: inset 0 0 20px rgba(245, 158, 11, 0.1);
+        }
+
+        .pack-amount {
+            font-size: 2rem;
+            font-weight: 800;
+            color: white;
+            margin-bottom: 0.5rem;
+        }
+
+        .pack-price {
+            font-size: 1.25rem;
+            color: var(--accent-primary);
+            font-weight: 700;
+        }
+
+        /* Form */
+        .payment-section {
+            padding-top: 3.5rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .input-group { margin-bottom: 1.5rem; }
+        .input-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+
+        label {
+            display: block;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-bottom: 0.6rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            font-weight: 700;
+        }
+
+        input {
+            width: 100%;
+            background: #0a0b0d;
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 1.1rem 1.4rem;
+            color: white;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+            font-family: 'Inter', sans-serif;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.1);
+        }
+
+        .btn-pay {
+            width: 100%;
+            background: var(--accent-primary);
+            color: #000;
+            border: none;
+            border-radius: 16px;
+            padding: 1.25rem;
+            font-weight: 800;
+            font-size: 1.1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            cursor: pointer;
+            transition: transform 0.3s var(--ease-out), filter 0.3s;
+            margin-top: 1.5rem;
+            box-shadow: 0 15px 35px -10px rgba(245, 158, 11, 0.4);
+        }
+
+        .btn-pay:hover {
+            transform: translateY(-3px);
+            filter: brightness(1.1);
+        }
+
+        /* Status Components */
+        .status-display { text-align: center; padding: 2rem 0; }
+        
+        .loader-ring {
+            width: 80px;
+            height: 80px;
+            border: 6px solid rgba(255, 255, 255, 0.05);
+            border-top-color: var(--accent-primary);
+            border-radius: 50%;
+            margin: 0 auto 3rem;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .icon-success {
+            width: 100px;
+            height: 100px;
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            margin: 0 auto 2rem;
+        }
+
+        .key-box {
+            background: #0a0b0d;
+            border: 1px dashed var(--border);
+            border-radius: 20px;
+            padding: 2.5rem;
+            margin: 2.5rem 0;
+        }
+
+        #redemption-key {
+            font-family: 'Monaco', monospace;
+            font-size: 1.5rem;
+            color: var(--accent-primary);
+            letter-spacing: 0.1em;
+            display: block;
+            margin-bottom: 2rem;
+        }
+
+        /* Animations & Interactions */
+        .game-card::before {
+            content: '';
+            position: absolute;
+            top: -100%;
+            left: 0;
+            width: 100%;
+            height: 50%;
+            background: linear-gradient(to bottom, transparent, rgba(245, 158, 11, 0.2), transparent);
+            z-index: 2;
+            pointer-events: none;
+            transition: 0s;
+        }
+
+        .game-card:hover::before {
+            animation: scan 1.5s linear infinite;
+        }
+
+        @keyframes scan {
+            from { top: -100%; }
+            to { top: 100%; }
+        }
+
+        .pulse-glow {
+            animation: pulse-glow 2s infinite;
+        }
+
+        @keyframes pulse-glow {
+            0% { box-shadow: 0 0 20px rgba(245, 158, 11, 0.2); }
+            50% { box-shadow: 0 0 40px rgba(245, 158, 11, 0.4); }
+            100% { box-shadow: 0 0 20px rgba(245, 158, 11, 0.2); }
+        }
+
+        /* Magnetic Button Wrapper */
+        .magnetic-wrap {
+            display: inline-block;
+            transition: transform 0.3s var(--ease-out);
+        }
+
+        @media (max-width: 768px) {
+            .surface { padding: 2rem 1.5rem; border-radius: 0; min-height: 100vh; }
+            .hero-title { font-size: 2.5rem; margin-bottom: 2rem; }
+            .input-row { grid-template-columns: 1fr; }
+            .container { padding: 0; }
         }
     </style>
 </head>
 <body>
+    <canvas id="bg-canvas"></canvas>
 
     <div class="container">
-    <div id="game-selection-page" class="page active">
-        <h1>Select Your Game</h1>
-        <div class="game-grid">
-
-            <div class="game-card" data-game="BGMI" data-currency="UC"
-                style="background-image: url('Images/pubg.jpg');">
-                <span class="game-title">BGMI</span>
+        <!-- Game Selection Page -->
+        <div id="game-selection-page" class="page active">
+            <h1 class="hero-title">
+                <i data-lucide="shield-check" style="width: 50px; height: 50px; color: var(--accent-primary); margin-right: 20px;"></i>
+                <span>The Vault</span>
+            </h1>
+            <div class="game-grid">
+                <div class="game-card" onclick="openGame('BGMI')">
+                    <img src="images/pubg.jpg" class="game-image" alt="BGMI">
+                    <div class="game-overlay">
+                        <span class="game-subtitle">Popular</span>
+                        <span class="game-title">BGMI</span>
+                    </div>
+                </div>
+                <div class="game-card" onclick="openGame('Free Fire')">
+                    <img src="images/free-fire.jpg" class="game-image" alt="Free Fire">
+                    <div class="game-overlay">
+                        <span class="game-subtitle">Battle Royale</span>
+                        <span class="game-title">Free Fire</span>
+                    </div>
+                </div>
+                <div class="game-card" onclick="openGame('Roblox')">
+                    <img src="images/roblox.jpg" class="game-image" alt="Roblox">
+                    <div class="game-overlay">
+                        <span class="game-subtitle">Metaverse</span>
+                        <span class="game-title">Roblox</span>
+                    </div>
+                </div>
+                <div class="game-card" onclick="openGame('Fortnite')">
+                    <img src="images/fornite.jpg" class="game-image" alt="Fortnite">
+                    <div class="game-overlay">
+                        <span class="game-subtitle">Trending</span>
+                        <span class="game-title">Fortnite</span>
+                    </div>
+                </div>
+                <div class="game-card" onclick="openGame('Valorant')">
+                    <img src="images/valorant.png" class="game-image" alt="Valorant">
+                    <div class="game-overlay">
+                        <span class="game-subtitle">Tactical</span>
+                        <span class="game-title">Valorant</span>
+                    </div>
+                </div>
+                <div class="game-card" onclick="window.location.href='amazon.html'">
+                    <img src="https://images.unsplash.com/photo-1523474253046-8cd2748b5fd2?auto=format&fit=crop&q=80&w=800" class="game-image" alt="Amazon Store">
+                    <div class="game-overlay">
+                        <span class="game-subtitle" style="color: #ff9900;">E-Commerce</span>
+                        <span class="game-title">Amazon Store</span>
+                    </div>
+                </div>
             </div>
-
-            <div class="game-card" data-game="Free Fire" data-currency="Diamonds"
-                style="background-image: url('Images/free-fire.jpg');">
-                <span class="game-title">Free Fire</span>
-            </div>
-
-            <div class="game-card" data-game="Roblox" data-currency="Robux"
-                style="background-image: url('Images/roblox.jpg');">
-                <span class="game-title">Roblox</span>
-            </div>
-
-            <div class="game-card" data-game="Fortnite" data-currency="V-Bucks"
-                style="background-image: url('Images/fornite.jpg');">
-                <span class="game-title">Fortnite</span>
-            </div>
-
         </div>
-    </div>
 
-
+        <!-- Purchase Page -->
         <div id="purchase-page" class="page">
-            <button class="back-button" onclick="showPage('game-selection-page')">&larr; Back to Games</button>
-            <div id="purchase-header">
+            <div class="surface">
+                <div class="magnetic-wrap">
+                    <button class="btn-back" onclick="showPage('game-selection-page')">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                        Return to Vault
+                    </button>
                 </div>
-            <div id="currency-options" class="currency-options">
-                </div>
-            
-            <form id="payment-form" onsubmit="handlePayment(event)">
-                <h2>Enter Payment Details</h2>
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label for="cardholder-name">Cardholder Name</label>
-                        <input type="text" id="cardholder-name" placeholder="e.g. Rohan Kumar" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="card-number">Card Number</label>
-                        <input type="text" id="card-number" value="1234-5678-9012-3456" required>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="expiry-date">Expiry Date</label>
-                            <input type="text" id="expiry-date" placeholder="MM/YY" required>
+                <h2 id="purchase-title">Select Currency Pack</h2>
+                <div id="currency-grid" class="currency-grid"></div>
+                
+                <div id="payment-section" class="payment-section" style="display: none;">
+                    <h2><i data-lucide="credit-card" style="width: 28px; height: 28px; margin-right: 10px; vertical-align: middle; color: var(--accent-primary);"></i>Secure Payment - ₹<span id="header-amount">0.00</span></h2>
+                    <form onsubmit="handlePayment(event)">
+                        <div class="input-group">
+                            <label>Pack Summary</label>
+                            <div style="background: rgba(255,255,255,0.05); padding: 1rem; border-radius: 12px; font-weight: 700; color: var(--accent-primary);">
+                                <span id="summary-pack">Select a pack</span>
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <label for="cvv">CVV</label>
-                            <input type="text" id="cvv" placeholder="123" required>
+                        <div class="input-group">
+                            <label>Cardholder Full Name</label>
+                            <input type="text" id="cardholder-name" placeholder="John Doe" required>
                         </div>
-                    </div>
+                        <div class="input-group">
+                            <label>Card Number</label>
+                            <input type="text" id="card-number" value="1234-5678-9012-3456" required>
+                        </div>
+                        <div class="input-row">
+                            <div class="input-group">
+                                <label>Expiry Date</label>
+                                <input type="text" id="expiry-date" placeholder="MM/YY" required>
+                            </div>
+                            <div class="input-group">
+                                <label>CVV</label>
+                                <input type="text" id="cvv" placeholder="123" required>
+                            </div>
+                        </div>
+                        <div class="magnetic-wrap" style="width: 100%;">
+                            <button type="submit" class="btn-pay">Confirm & Pay ₹<span id="pay-amount">0.00</span></button>
+                        </div>
+                    </form>
                 </div>
-                <button type="submit" class="pay-button">Pay ₹<span id="pay-amount">0.00</span></button>
-            </form>
+            </div>
         </div>
 
+        <!-- Status Page -->
         <div id="status-page" class="page">
-             <div class="status-container" id="status-loading">
-                <div class="loader"></div>
-                <p class="status-message">Contacting bank...<br>Awaiting approval on parent's device.</p>
-            </div>
-            <div class="status-container" id="status-success" style="display: none;">
-                <div id="confetti-container" class="confetti-container"></div>
-                <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
-                    <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none"/>
-                    <path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
-                </svg>
-                <h2 class="status-message">Payment Successful!</h2>
-                <p style="color: var(--subtle-text-color);">Your redemption key is ready:</p>
-                <div class="key-container">
-                    <span id="redemption-key"></span>
-                    <button id="copy-key-button" onclick="copyKey()">Copy</button>
+            <div class="surface">
+                <div id="status-loading" class="status-display">
+                    <div class="loader-ring"></div>
+                    <h2>Verifying ₹<span id="loading-amount">0.00</span></h2>
+                    <p style="color: var(--text-muted); font-size: 0.95rem;">Requesting secure authorization from linked device...</p>
                 </div>
-                 <p style="color: var(--subtle-text-color); font-size: 0.9rem;">Enter this key in the game to receive your currency.</p>
-                <button class="back-button" onclick="showPage('game-selection-page')">Purchase More</button>
+
+                <div id="status-success" class="status-display" style="display: none;">
+                    <div class="icon-success"><i data-lucide="check-circle-2" style="width: 50px; height: 50px;"></i></div>
+                    <h2>₹<span id="success-amount">0.00</span> Paid Successfully</h2>
+                    <p style="color: var(--text-muted)">Your game credits for <span id="success-game" style="color: var(--accent-primary); font-weight: 700;"></span> have been authorized.</p>
+                    
+                    <div class="key-box">
+                        <span id="redemption-key"></span>
+                        <button class="btn-pay" style="width: auto; padding: 0.8rem 2rem; font-size: 0.9rem;" onclick="copyKey(this)">Copy Key</button>
+                    </div>
+                    
+                    <button class="btn-back" style="margin: 0 auto;" onclick="showPage('game-selection-page')">Back to Home</button>
+                </div>
+
+               <div id="status-error" class="status-display" style="display: none;">
+                    <div class="icon-success" style="background: rgba(239, 68, 68, 0.1); color: var(--error); border-color: rgba(239, 68, 68, 0.2);"><i data-lucide="alert-circle" style="width: 50px; height: 50px;"></i></div>
+                    <h2 style="color: var(--error);">Payment Failed</h2>
+                    <p id="error-message" style="color: var(--text-muted)">The transaction was declined by the provider.</p>
+                    <button class="btn-back" style="margin: 2rem auto;" onclick="showPage('game-selection-page')">Return to Home</button>
+                </div>
             </div>
         </div>
     </div>
 
     <script src="https://cdn.socket.io/4.8.1/socket.io.min.js"></script>
-    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
     <script>
-        // --- DATA ---
         const gameData = {
             'BGMI': { currency: 'UC', packs: [{ amount: 60, price: 89 }, { amount: 325, price: 449 }, { amount: 660, price: 899 }, { amount: 1800, price: 2249 }] },
             'Free Fire': { currency: 'Diamonds', packs: [{ amount: 100, price: 80 }, { amount: 310, price: 240 }, { amount: 520, price: 400 }, { amount: 1060, price: 800 }] },
             'Roblox': { currency: 'Robux', packs: [{ amount: 400, price: 459 }, { amount: 800, price: 899 }, { amount: 1700, price: 1799 }, { amount: 4500, price: 4599 }] },
+            'Fortnite': { currency: 'V-Bucks', packs: [{ amount: 1000, price: 799 }, { amount: 2800, price: 1999 }, { amount: 5000, price: 3499 }, { amount: 13500, price: 7999 }] },
             'Valorant': { currency: 'VP', packs: [{ amount: 475, price: 499 }, { amount: 1000, price: 999 }, { amount: 2050, price: 1999 }, { amount: 5350, price: 4999 }] },
         };
-        const MAGIC_CARD_NUMBER = "1234-5678-9012-3456";
-        
-        let selectedPrice = 0;
-        let selectedGameName = ''; // Track the game for the MongoDB log
 
-        // --- BACKEND & WEBSOCKET SETUP ---
-        // Change this to your PC's IP address (e.g., "http://192.168.1.X:10000") if you are testing across devices!
-        const BACKEND_URL = "https://hackathon-backend-343x.onrender.com"; 
-        
-        // 1. Initialize WebSocket Connection
+        const BACKEND_URL = "https://hackathon-backend-343x.onrender.com";
         const socket = io(BACKEND_URL);
+        const MAGIC_CARD = "1234567890123456";
 
-        // 2. Listen for INSTANT updates from the Node.js Server
-        socket.on("status_update", (data) => {
-            console.log("⚡ Instant status update received:", data.status);
-            
-            // Re-hide success screen just in case we are resetting
-            if(data.status === 'pending') {
-                document.getElementById('status-loading').style.display = 'block';
-                document.getElementById('status-success').style.display = 'none';
-                document.querySelector('#status-loading .loader').style.display = 'block';
-                document.querySelector('#status-loading .status-message').innerHTML = `Contacting bank...<br>Awaiting approval on parent's device.`;
-            } 
-            else if (data.status === 'approved') {
-                const redemptionKey = generateRedemptionKey();
-                document.getElementById('redemption-key').textContent = redemptionKey;
-                document.getElementById('status-loading').style.display = 'none';
-                document.getElementById('status-success').style.display = 'block';
-                launchConfetti();
-                document.querySelector('.key-container').classList.add('glow');
-            } 
-            else if (data.status === 'declined') {
-                const loadingStatus = document.querySelector('#status-loading .status-message');
-                loadingStatus.innerHTML = `<span style="color: var(--error-color);">Payment Declined by Parent.</span>`;
-                document.querySelector('#status-loading .loader').style.display = 'none';
-            }
+        let selectedPrice = 0;
+        let selectedGame = '';
+
+        // --- INITIALIZATION ---
+
+        document.addEventListener('DOMContentLoaded', () => {
+            initParticles();
+            initMagnetic();
+            initFloating();
+            scrambleText('.hero-title', 'THE VAULT');
+            animatePageIn('game-selection-page');
+            lucide.createIcons();
         });
 
-        // --- PAGE NAVIGATION LOGIC ---
+        // Interactive Particle System (Crazy Background)
+        function initParticles() {
+            const canvas = document.getElementById('bg-canvas');
+            const ctx = canvas.getContext('2d');
+            let particles = [];
+            let mouse = { x: null, y: null, radius: 150 };
+
+            window.addEventListener('resize', resize);
+            window.addEventListener('mousemove', (e) => {
+                mouse.x = e.clientX;
+                mouse.y = e.clientY;
+            });
+
+            function resize() {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+                init();
+            }
+
+            class Particle {
+                constructor() {
+                    this.reset();
+                }
+                reset() {
+                    this.x = Math.random() * canvas.width;
+                    this.y = Math.random() * canvas.height;
+                    this.size = Math.random() * 2 + 1;
+                    this.vx = (Math.random() - 0.5) * 0.5;
+                    this.vy = (Math.random() - 0.5) * 0.5;
+                    this.baseX = this.x;
+                    this.baseY = this.y;
+                    this.density = (Math.random() * 30) + 1;
+                }
+                update() {
+                    this.x += this.vx;
+                    this.y += this.vy;
+
+                    let dx = mouse.x - this.x;
+                    let dy = mouse.y - this.y;
+                    let distance = Math.sqrt(dx * dx + dy * dy);
+                    
+                    if (distance < mouse.radius) {
+                        let forceDirectionX = dx / distance;
+                        let forceDirectionY = dy / distance;
+                        let maxDistance = mouse.radius;
+                        let force = (maxDistance - distance) / maxDistance;
+                        let directionX = forceDirectionX * force * this.density;
+                        let directionY = forceDirectionY * force * this.density;
+                        this.x -= directionX;
+                        this.y -= directionY;
+                    }
+
+                    if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
+                    if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
+                }
+                draw() {
+                    ctx.fillStyle = 'rgba(245, 158, 11, 0.4)';
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            }
+
+            function init() {
+                particles = [];
+                let numberOfParticles = (canvas.width * canvas.height) / 9000;
+                for (let i = 0; i < numberOfParticles; i++) {
+                    particles.push(new Particle());
+                }
+            }
+
+            function connect() {
+                let opacityValue = 1;
+                for (let a = 0; a < particles.length; a++) {
+                    for (let b = a; b < particles.length; b++) {
+                        let dx = particles[a].x - particles[b].x;
+                        let dy = particles[a].y - particles[b].y;
+                        let distance = Math.sqrt(dx * dx + dy * dy);
+
+                        if (distance < 150) {
+                            opacityValue = 1 - (distance / 150);
+                            ctx.strokeStyle = `rgba(245, 158, 11, ${opacityValue * 0.2})`;
+                            ctx.lineWidth = 1;
+                            ctx.beginPath();
+                            ctx.moveTo(particles[a].x, particles[a].y);
+                            ctx.lineTo(particles[b].x, particles[b].y);
+                            ctx.stroke();
+                        }
+                    }
+                }
+            }
+
+            function animate() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                for (let i = 0; i < particles.length; i++) {
+                    particles[i].update();
+                    particles[i].draw();
+                }
+                connect();
+                requestAnimationFrame(animate);
+            }
+
+            resize();
+            animate();
+        }
+
+        // Magnetic Pull Logic
+        function initMagnetic() {
+            document.querySelectorAll('.magnetic-wrap').forEach(wrap => {
+                wrap.addEventListener('mousemove', (e) => {
+                    const rect = wrap.getBoundingClientRect();
+                    const x = e.clientX - rect.left - rect.width / 2;
+                    const y = e.clientY - rect.top - rect.height / 2;
+                    gsap.to(wrap, { x: x * 0.3, y: y * 0.3, duration: 0.4, ease: 'power2.out' });
+                });
+                wrap.addEventListener('mouseleave', () => {
+                    gsap.to(wrap, { x: 0, y: 0, duration: 0.6, ease: 'elastic.out(1, 0.3)' });
+                });
+            });
+        }
+
+        // Text Scramble Effect
+        function scrambleText(selector, finalString) {
+            const el = document.querySelector(`${selector} span`);
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+';
+            let iteration = 0;
+            const interval = setInterval(() => {
+                el.innerText = finalString.split('').map((char, index) => {
+                    if (index < iteration) return finalString[index];
+                    return chars[Math.floor(Math.random() * chars.length)];
+                }).join('');
+                if (iteration >= finalString.length) clearInterval(interval);
+                iteration += 1 / 3;
+            }, 30);
+        }
+
+        // Subtle Floating Animation
+        function initFloating() {
+            gsap.to('.game-card', {
+                y: '-=10',
+                duration: 2,
+                repeat: -1,
+                yoyo: true,
+                ease: 'sine.inOut',
+                stagger: { each: 0.2, from: 'random' }
+            });
+        }
+
+        // Robust Page Transitions
         function showPage(pageId) {
-            if (document.getElementById('status-page').classList.contains('active')) {
-                document.getElementById('confetti-container').innerHTML = '';
-                const keyContainer = document.querySelector('.key-container');
-                if(keyContainer) keyContainer.classList.remove('glow');
+            const current = document.querySelector('.page.active');
+            if (current) {
+                gsap.to(current, {
+                    opacity: 0,
+                    scale: 0.98,
+                    duration: 0.4,
+                    ease: 'power2.in',
+                    onComplete: () => {
+                        current.classList.remove('active');
+                        current.style.display = 'none';
+                        animatePageIn(pageId);
+                    }
+                });
+            } else {
+                animatePageIn(pageId);
             }
-            
-            document.querySelectorAll('.page').forEach(page => {
-                page.classList.remove('active');
-            });
-            document.getElementById(pageId).classList.add('active');
-            window.scrollTo(0, 0);
         }
 
-        // --- GAME SELECTION LOGIC ---
-        document.querySelectorAll('.game-card').forEach(card => {
-            card.addEventListener('click', () => {
-                const gameName = card.dataset.game;
-                setupPurchasePage(gameName);
-                showPage('purchase-page');
-            });
-        });
-
-        // --- PURCHASE PAGE LOGIC ---
-        function setupPurchasePage(gameName) {
-            selectedGameName = gameName; // Store it for the backend POST request
-            const game = gameData[gameName];
-            const headerEl = document.getElementById('purchase-header');
-            const optionsEl = document.getElementById('currency-options');
+        function animatePageIn(pageId) {
+            const target = document.getElementById(pageId);
+            target.style.display = 'block';
+            target.classList.add('active');
             
-            optionsEl.innerHTML = '';
-            document.getElementById('payment-form').style.display = 'none';
+            gsap.fromTo(target, 
+                { opacity: 0, scale: 1.02 },
+                { opacity: 1, scale: 1, duration: 0.6, ease: 'power2.out' }
+            );
 
-            headerEl.innerHTML = `<h2>Purchase ${game.currency}</h2>`;
-
-            game.packs.forEach(pack => {
-                const option = document.createElement('div');
-                option.classList.add('currency-option');
-                option.innerHTML = `<div class="currency-amount">${pack.amount} ${game.currency}</div><div class="currency-price">₹${pack.price.toFixed(2)}</div>`;
-                option.onclick = () => selectCurrencyPack(option, pack.price);
-                optionsEl.appendChild(option);
-            });
+            if (pageId === 'game-selection-page') {
+                gsap.from('.game-card', {
+                    opacity: 0,
+                    y: 30,
+                    stagger: 0.08,
+                    duration: 0.8,
+                    ease: 'power3.out',
+                    delay: 0.2
+                });
+            }
         }
-        
-        function selectCurrencyPack(selectedElement, price) {
-            document.querySelectorAll('.currency-option').forEach(el => el.classList.remove('selected'));
-            selectedElement.classList.add('selected');
+
+        // --- CORE LOGIC ---
+
+        function openGame(gameName) {
+            selectedGame = gameName;
+            const data = gameData[gameName];
+            document.getElementById('purchase-title').textContent = `Top-Up ${gameName} ${data.currency}`;
             
+            const grid = document.getElementById('currency-grid');
+            grid.innerHTML = '';
+            
+            data.packs.forEach((pack) => {
+                const card = document.createElement('div');
+                card.className = 'pack-card';
+                card.innerHTML = `
+                    <div style="margin-bottom: 1rem; opacity: 0.6;"><i data-lucide="package"></i></div>
+                    <div class="pack-amount">${pack.amount} ${data.currency}</div>
+                    <div class="pack-price">₹${pack.price}</div>
+                `;
+                card.onclick = () => selectPack(card, pack.price, `${pack.amount} ${data.currency}`);
+                grid.appendChild(card);
+            });
+
+            lucide.createIcons();
+            document.getElementById('payment-section').style.display = 'none';
+            showPage('purchase-page');
+        }
+
+        function selectPack(card, price, packInfo) {
+            document.querySelectorAll('.pack-card').forEach(c => {
+                c.classList.remove('selected');
+            });
+            card.classList.add('selected');
             selectedPrice = price;
-            document.getElementById('pay-amount').textContent = price.toFixed(2);
-            document.getElementById('payment-form').style.display = 'block';
-        }
-        
-        // --- UTILITY FUNCTIONS ---
-        function generateRedemptionKey() {
-            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-            let key = '';
-            for (let i = 0; i < 32; i++) {
-                key += chars.charAt(Math.floor(Math.random() * chars.length));
-            }
-            return key;
-        }
-        
-        function launchConfetti() {
-            const confettiContainer = document.getElementById('confetti-container');
-            confettiContainer.innerHTML = ''; 
-            const confettiCount = 100;
-            for (let i = 0; i < confettiCount; i++) {
-                const confetti = document.createElement('div');
-                confetti.classList.add('confetti');
-                confetti.style.left = `${Math.random() * 100}%`;
-                confetti.style.animationDelay = `${Math.random() * 5}s`;
-                confetti.style.animationDuration = `${3 + Math.random() * 2}s`;
-                confettiContainer.appendChild(confetti);
-            }
-        }
-
-        function copyKey() {
-            const keyText = document.getElementById('redemption-key').innerText;
-            const copyButton = document.getElementById('copy-key-button');
             
-            const textArea = document.createElement("textarea");
-            textArea.value = keyText;
-            document.body.appendChild(textArea);
-            textArea.select();
-            document.execCommand('copy');
-            document.body.removeChild(textArea);
-
-            copyButton.textContent = 'Copied!';
-            setTimeout(() => {
-                copyButton.textContent = 'Copy';
-            }, 2000);
+            const formattedPrice = price.toFixed(2);
+            document.getElementById('pay-amount').textContent = formattedPrice;
+            document.getElementById('header-amount').textContent = formattedPrice;
+            document.getElementById('loading-amount').textContent = formattedPrice;
+            document.getElementById('success-amount').textContent = formattedPrice;
+            document.getElementById('summary-pack').textContent = `${selectedGame} - ${packInfo}`;
+            document.getElementById('success-game').textContent = `${selectedGame} (${packInfo})`;
+            
+            document.getElementById('payment-section').style.display = 'block';
+            setTimeout(() => document.getElementById('payment-section').scrollIntoView({ behavior: 'smooth' }), 100);
         }
 
-        // --- NEW PAYMENT LOGIC (No Polling) ---
-        async function handlePayment(event) {
-            event.preventDefault();
-            const cardNumber = document.getElementById('card-number').value;
+        async function handlePayment(e) {
+            e.preventDefault();
+            const cardNum = document.getElementById('card-number').value.replace(/-/g, '');
 
-            if (cardNumber.replace(/-/g, '') !== MAGIC_CARD_NUMBER.replace(/-/g, '')) {
-                alert("Invalid card number for this demo. Please use the magic number: 1234-5678-9012-3456");
+            if (cardNum !== MAGIC_CARD) {
+                alert("Demo Mode: Please use the magic card number 1234-5678-9012-3456");
                 return;
             }
 
-            // Reset the UI to the loading state
             document.getElementById('status-loading').style.display = 'block';
             document.getElementById('status-success').style.display = 'none';
-            document.querySelector('#status-loading .loader').style.display = 'block';
-            document.querySelector('#status-loading .status-message').innerHTML = `Contacting bank...<br>Awaiting approval on parent's device.`;
-            
+            document.getElementById('status-error').style.display = 'none';
             showPage('status-page');
             
             try {
-                // Send the payload to the backend to trigger the WebSockets and log to MongoDB
                 await fetch(`${BACKEND_URL}/initiate-payment`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ 
-                        cardNumber: cardNumber,
-                        gameName: selectedGameName,
-                        amount: selectedPrice
-                    })
+                    body: JSON.stringify({ cardNumber: cardNum, gameName: selectedGame, amount: selectedPrice })
                 });
-                
-                // BOOM. That's it. No setInterval. The socket.on listener handles the rest.
-                
-            } catch (error) {
-                console.error("Error initiating payment:", error);
-                document.querySelector('#status-loading .status-message').innerText = 'Error connecting to the server.';
-                document.querySelector('#status-loading .loader').style.display = 'none';
+            } catch (err) {
+                showError("Connection failed. Check your network.");
             }
         }
 
-        // --- INITIALIZATION ---
-        document.addEventListener('DOMContentLoaded', () => {
-            showPage('game-selection-page');
+        socket.on("status_update", (data) => {
+            if (data.status === 'approved') {
+                confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 }, colors: ['#f59e0b', '#fff'] });
+                document.getElementById('redemption-key').textContent = generateKey();
+                document.getElementById('status-loading').style.display = 'none';
+                document.getElementById('status-success').style.display = 'block';
+                gsap.from('#status-success', { scale: 0.9, opacity: 0, duration: 0.5 });
+            } else if (data.status === 'declined') {
+                showError("Payment was declined by the authorization provider.");
+            }
         });
 
+        function showError(msg) {
+            document.getElementById('status-loading').style.display = 'none';
+            document.getElementById('status-error').style.display = 'block';
+            document.getElementById('error-message').textContent = msg;
+            gsap.from('#status-error', { x: 10, repeat: 4, yoyo: true, duration: 0.05 });
+        }
+
+        function generateKey() {
+            const chars = 'ABCDEF1234567890GHIJKLMNOPQRSTUVWXYZ';
+            return Array.from({length: 20}, () => chars[Math.floor(Math.random()*chars.length)]).join('').match(/.{4}/g).join('-');
+        }
+
+        function copyKey(btn) {
+            const key = document.getElementById('redemption-key').textContent;
+            navigator.clipboard.writeText(key).then(() => {
+                const oldText = btn.textContent;
+                btn.textContent = 'Key Copied!';
+                gsap.to(btn, { backgroundColor: '#10b981', duration: 0.2 });
+                setTimeout(() => {
+                    btn.textContent = oldText;
+                    gsap.to(btn, { backgroundColor: '', duration: 0.2 });
+                }, 2000);
+            });
+        }
     </script>
 </body>
 </html>

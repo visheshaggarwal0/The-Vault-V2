@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Amazon Clone | Premium UI</title>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M4 20 C10 24 22 24 28 20' fill='none' stroke='%23ff9900' stroke-width='2.5' stroke-linecap='round' /%3E%3Cpath d='M28 20 L24 18 M28 20 L26 24' stroke='%23ff9900' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root {
+            --bg-dark: #0a0b0d;
+            --bg-surface: #121417;
+            --bg-card: rgba(22, 24, 28, 0.85);
+            --accent-primary: #ff9900;
+            --accent-glow: rgba(255, 153, 0, 0.4);
+            --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
+            --border: rgba(255, 255, 255, 0.08);
+            --glass-blur: blur(32px);
+            --success: #10b981;
+            --error: #ef4444;
+            --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-font-smoothing: antialiased; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3 { font-family: 'Outfit', sans-serif; }
+
+        /* Navbar */
+        nav {
+            background: var(--bg-card);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border-bottom: 1px solid var(--border);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+
+        .logo {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 800;
+            font-size: 1.8rem;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+        }
+
+        .logo span { color: var(--accent-primary); }
+
+        .nav-actions { display: flex; gap: 20px; align-items: center; }
+
+        .cart-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border);
+            color: white;
+            padding: 0.6rem 1.2rem;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            transition: all 0.3s var(--ease-out);
+            position: relative;
+        }
+
+        .cart-btn:hover { border-color: var(--accent-primary); background: rgba(255, 153, 0, 0.1); }
+        .cart-badge {
+            background: var(--accent-primary);
+            color: black;
+            font-weight: 800;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 0.8rem;
+        }
+
+        /* Container & Pages */
+        .container { max-width: 1200px; margin: 2rem auto; padding: 0 1.5rem; }
+        .page { display: none; opacity: 0; transform: scale(0.98); }
+        .page.active { display: block; opacity: 1; transform: scale(1); }
+
+        /* Products Grid */
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 2rem;
+        }
+
+        .product-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            overflow: hidden;
+            transition: all 0.4s var(--ease-out);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .product-card:hover { border-color: var(--accent-primary); transform: translateY(-8px); box-shadow: 0 20px 40px -10px var(--accent-glow); }
+
+        .product-img { width: 100%; height: 220px; object-fit: cover; border-bottom: 1px solid var(--border); }
+
+        .product-info { padding: 1.5rem; display: flex; flex-direction: column; flex-grow: 1; }
+        .product-title { font-size: 1.2rem; font-weight: 600; margin-bottom: 0.5rem; color: white; }
+        .product-price { font-size: 1.5rem; font-weight: 800; color: var(--accent-primary); margin-bottom: 1rem; }
+        .product-desc { font-size: 0.9rem; color: var(--text-muted); margin-bottom: 1.5rem; flex-grow: 1; }
+
+        .btn {
+            background: var(--accent-primary);
+            color: #000;
+            border: none;
+            border-radius: 12px;
+            padding: 1rem;
+            font-weight: 800;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .btn:hover { filter: brightness(1.1); transform: translateY(-2px); }
+        .btn:active { transform: translateY(0); }
+
+        /* Cart Page */
+        .surface {
+            background: var(--bg-card);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 3rem;
+        }
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+            border-bottom: 1px solid var(--border);
+        }
+        .cart-item-title { font-weight: 600; font-size: 1.1rem; }
+        .cart-item-price { color: var(--accent-primary); font-weight: 700; }
+        .cart-total {
+            font-size: 1.8rem;
+            font-weight: 800;
+            text-align: right;
+            margin: 2rem 0;
+            color: white;
+        }
+
+        .btn-back {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border);
+            color: var(--text-muted);
+            padding: 0.8rem 1.6rem;
+            border-radius: 12px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 2rem;
+        }
+        .btn-back:hover { color: white; border-color: white; }
+
+        /* Payment Section (Reused from Vault) */
+        .payment-section { margin-top: 1rem; }
+        .input-group { margin-bottom: 1rem; }
+        .input-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+        label { display: block; font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.6rem; text-transform: uppercase; font-weight: 700; letter-spacing: 0.1em; }
+        input {
+            width: 100%;
+            background: #0a0b0d;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 0.8rem 1rem;
+            color: white;
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+        input:focus { outline: none; border-color: var(--accent-primary); }
+
+        /* Status Displays */
+        .status-display { text-align: center; padding: 3rem 0; }
+        .loader-ring {
+            width: 70px; height: 70px;
+            border: 5px solid rgba(255, 255, 255, 0.05);
+            border-top-color: var(--accent-primary);
+            border-radius: 50%;
+            margin: 0 auto 2rem;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .icon-success {
+            width: 90px; height: 90px;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 2.5rem; margin: 0 auto 1.5rem;
+        }
+        .success-bg { background: rgba(16, 185, 129, 0.1); color: var(--success); border: 1px solid rgba(16, 185, 129, 0.2); }
+        .error-bg { background: rgba(239, 68, 68, 0.1); color: var(--error); border: 1px solid rgba(239, 68, 68, 0.2); }
+
+        /* Toast Notify */
+        .toast {
+            position: fixed;
+            bottom: 2rem; right: 2rem;
+            background: var(--bg-card);
+            border: 1px solid var(--accent-primary);
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            color: white;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.4s var(--ease-out);
+            z-index: 100;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        .toast.show { transform: translateY(0); opacity: 1; }
+
+        /* Mobile Optimization */
+        @media (max-width: 768px) {
+            nav { padding: 1rem; }
+            .logo { font-size: 1.4rem; }
+            .btn-back span { display: none; } /* Hide "Return to Vault" text */
+            .btn-back { padding: 0.6rem; margin-bottom: 0; }
+            .nav-actions { gap: 10px; }
+            .cart-btn { padding: 0.6rem; }
+            .cart-btn span { display: none; } /* Hide "Cart" text */
+
+            .container { margin: 1rem auto; }
+            
+            .product-grid { 
+                grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); 
+                gap: 1rem; 
+            }
+            .product-card { border-radius: 16px; }
+            .product-img { height: 160px; }
+            .product-info { padding: 1rem; }
+            .product-title { font-size: 1rem; }
+            .product-price { font-size: 1.2rem; }
+            .product-desc { font-size: 0.8rem; height: 3.2rem; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+            
+            .surface { padding: 1.5rem; border-radius: 20px; }
+            .cart-total { font-size: 1.5rem; }
+            
+            .input-row { grid-template-columns: 1fr; gap: 0; } /* Stack inputs on mobile */
+            
+            h2 { font-size: 1.6rem; }
+        }
+
+        @media (max-width: 480px) {
+            .product-grid { grid-template-columns: repeat(2, 1fr); } /* Force 2 columns on small phones */
+        }
+
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div class="logo" onclick="window.location.href='index.html'">
+            <i data-lucide="package" style="color: var(--accent-primary);"></i>
+            amazon<span>clone</span>
+        </div>
+        <div class="nav-actions">
+            <button class="btn-back" style="margin: 0;" onclick="window.location.href='index.html'">
+                <i data-lucide="arrow-left" style="width: 18px; height: 18px;"></i> <span>Return to Vault</span>
+            </button>
+            <div class="cart-btn" onclick="showPage('cart-page')">
+                <i data-lucide="shopping-cart"></i>
+                <span>Cart</span>
+                <div class="cart-badge" id="cartCount">0</div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        
+        <!-- Products Page -->
+        <div id="products-page" class="page active">
+            <h2 style="margin-bottom: 2rem; font-size: 2.5rem; border-bottom: 1px solid var(--border); padding-bottom: 1rem;">Featured Products</h2>
+            <div class="product-grid" id="productGrid">
+                <!-- Injected via JS -->
+            </div>
+        </div>
+
+        <!-- Cart & Checkout Page -->
+        <div id="cart-page" class="page">
+            <div class="surface">
+                <button class="btn-back" onclick="showPage('products-page')">
+                    <i data-lucide="arrow-left" style="width: 18px;"></i> Continue Shopping
+                </button>
+                <h2>Your Shopping Cart</h2>
+                
+                <div id="cart-items" style="margin-top: 2rem;">
+                    <!-- Items -->
+                </div>
+                
+                <div class="cart-total" id="cart-total-display" style="display: none;">
+                    Total: ₹<span id="cart-total-amount">0</span>
+                </div>
+
+                <div id="empty-cart-msg" style="text-align: center; color: var(--text-muted); padding: 3rem 0; font-size: 1.2rem;">
+                    Your cart is currently empty.
+                </div>
+
+                <!-- Payment Form -->
+                <div id="checkout-section" class="payment-section" style="display: none; border-top: 1px solid var(--border); padding-top: 2rem;">
+                    <h2><i data-lucide="credit-card" style="width: 28px; height: 28px; margin-right: 10px; vertical-align: middle; color: var(--accent-primary);"></i>Secure Payment</h2>
+                    <form onsubmit="handlePayment(event)" style="margin-top: 1.5rem;">
+                        <div class="input-row">
+                            <div class="input-group">
+                                <label>Cardholder Full Name</label>
+                                <input type="text" id="cardholder-name" placeholder="John Doe" required>
+                            </div>
+                            <div class="input-group">
+                                <label>Card Number</label>
+                                <input type="text" id="card-number" value="1234-5678-9012-3456" required>
+                            </div>
+                        </div>
+                        <div class="input-row">
+                            <div class="input-group">
+                                <label>Expiry Date</label>
+                                <input type="text" id="expiry-date" placeholder="MM/YY" required>
+                            </div>
+                            <div class="input-group">
+                                <label>CVV</label>
+                                <input type="text" id="cvv" placeholder="123" required>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn" style="width: 100%; margin-top: 0.5rem; font-size: 1.1rem;">
+                            Confirm Purchase (₹<span id="pay-amount-btn">0</span>)
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Status Page -->
+        <div id="status-page" class="page">
+            <div class="surface">
+                <div id="status-loading" class="status-display">
+                    <div class="loader-ring"></div>
+                    <h2>Processing Payment</h2>
+                    <p style="color: var(--text-muted);">Requesting secure authorization...</p>
+                </div>
+
+                <div id="status-success" class="status-display" style="display: none;">
+                    <div class="icon-success success-bg"><i data-lucide="check-circle-2"></i></div>
+                    <h2>Payment Successful!</h2>
+                    <p style="color: var(--text-muted); margin-bottom: 2rem;">Your order has been placed and is being prepared for shipping.</p>
+                    <button class="btn" style="margin: 0 auto; width: auto; padding: 1rem 3rem;" onclick="clearCartAndHome()">Continue Shopping</button>
+                </div>
+
+                <div id="status-error" class="status-display" style="display: none;">
+                    <div class="icon-success error-bg"><i data-lucide="alert-circle"></i></div>
+                    <h2 style="color: var(--error);">Payment Failed</h2>
+                    <p id="error-message" style="color: var(--text-muted); margin-bottom: 2rem;">The transaction was declined by the provider.</p>
+                    <button class="btn-back" style="margin: 0 auto;" onclick="showPage('cart-page')">Back to Cart</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast">
+        <i data-lucide="check" style="color: var(--success)"></i>
+        Added to Cart
+    </div>
+
+    <script src="https://cdn.socket.io/4.8.1/socket.io.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+    <script>
+        lucide.createIcons();
+
+        const BACKEND_URL = "https://hackathon-backend-343x.onrender.com";
+        const socket = io(BACKEND_URL);
+        const MAGIC_CARD = "1234567890123456";
+
+        const products = [
+            { id: 1, name: "Sony WH-1000XM5 Wireless Headphones", price: 29990, img: "https://images.unsplash.com/photo-1618366712010-f4ae9c647dcb?auto=format&fit=crop&q=80&w=800", desc: "Industry-leading noise cancelation." },
+            { id: 2, name: "Apple Watch Series 9", price: 39900, img: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&q=80&w=800", desc: "Smarter, brighter, mightier." },
+            { id: 3, name: "Logitech MX Master 3S", price: 9495, img: "https://images.unsplash.com/photo-1615663245857-ac93bb7c39e7?auto=format&fit=crop&q=80&w=800", desc: "Iconic mouse, now with 8K DPI." },
+            { id: 4, name: "Keychron Q1 Pro Mechanical", price: 16999, img: "https://images.unsplash.com/photo-1595225476474-87563907a212?auto=format&fit=crop&q=80&w=800", desc: "Wireless custom mechanical keyboard." },
+            { id: 5, name: "Samsung Galaxy S24 Ultra", price: 129999, img: "https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?auto=format&fit=crop&q=80&w=800", desc: "Galaxy AI is here." },
+            { id: 6, name: "Premium Laptop Stand", price: 2499, img: "https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?auto=format&fit=crop&q=80&w=800", desc: "Ergonomic aluminum stand." },
+            { id: 7, name: "iPad Pro M4 13-inch", price: 129900, img: "https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?auto=format&fit=crop&q=80&w=800", desc: "Thin possible, powerful as ever." },
+            { id: 8, name: "Canon EOS R5 Mirrorless", price: 329995, img: "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&q=80&w=800", desc: "8K video and 45MP stills." },
+            { id: 9, name: "Razer BlackShark V2 Pro", price: 14999, img: "https://images.unsplash.com/photo-1612287230202-1ff1d85d1bdf?auto=format&fit=crop&q=80&w=800", desc: "Definitive esports gaming headset." },
+            { id: 10, name: "Samsung T7 Shield 2TB", price: 15999, img: "https://image.semiconductor.samsung.com/image/samsung/p6/semiconductor/newsroom/news/samsungs-rugged-t7-shield-portable-ssd-offers-durability_pc_2.png?$ORIGIN_PNG$", desc: "Rugged durability, fast speeds." },
+            { id: 11, name: "Echo Dot 5th Gen", price: 5499, img: "https://images.unsplash.com/photo-1589492477829-5e65395b66cc?auto=format&fit=crop&q=80&w=800", desc: "Compact smart speaker with Alexa." },
+            { id: 12, name: "LG UltraGear 4K Monitor", price: 45990, img: "https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?auto=format&fit=crop&q=80&w=800", desc: "Nano IPS 1ms gaming excellence." }
+        ];
+
+        let cart = [];
+
+        // Render Products
+        const grid = document.getElementById("productGrid");
+        products.forEach(p => {
+            const card = document.createElement("div");
+            card.className = "product-card";
+            card.innerHTML = `
+                <img src="${p.img}" class="product-img">
+                <div class="product-info">
+                    <div class="product-title">${p.name}</div>
+                    <div class="product-desc">${p.desc}</div>
+                    <div class="product-price">₹${p.price.toLocaleString('en-IN')}</div>
+                    <button class="btn" onclick="addToCart(${p.id})">
+                        <i data-lucide="shopping-bag" style="width: 18px;"></i> Add to Cart
+                    </button>
+                </div>
+            `;
+            grid.appendChild(card);
+        });
+        lucide.createIcons();
+
+        function addToCart(id) {
+            const product = products.find(p => p.id === id);
+            cart.push(product);
+            
+            // Update UI
+            gsap.fromTo('#cartCount', { scale: 1.5 }, { scale: 1, duration: 0.3 });
+            document.getElementById("cartCount").innerText = cart.length;
+            
+            // Show Toast
+            const toast = document.getElementById('toast');
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 2000);
+
+            renderCart();
+        }
+
+        function renderCart() {
+            const itemsContainer = document.getElementById('cart-items');
+            const checkoutSection = document.getElementById('checkout-section');
+            const cartTotalDisplay = document.getElementById('cart-total-display');
+            const emptyMsg = document.getElementById('empty-cart-msg');
+
+            itemsContainer.innerHTML = '';
+            
+            if (cart.length === 0) {
+                emptyMsg.style.display = 'block';
+                checkoutSection.style.display = 'none';
+                cartTotalDisplay.style.display = 'none';
+                return;
+            }
+
+            emptyMsg.style.display = 'none';
+            checkoutSection.style.display = 'block';
+            cartTotalDisplay.style.display = 'block';
+
+            let total = 0;
+            cart.forEach((item, index) => {
+                total += item.price;
+                const div = document.createElement('div');
+                div.className = 'cart-item';
+                div.innerHTML = `
+                    <div>
+                        <div class="cart-item-title">${item.name}</div>
+                    </div>
+                    <div style="display: flex; gap: 20px; align-items: center;">
+                        <span class="cart-item-price">₹${item.price.toLocaleString('en-IN')}</span>
+                        <button onclick="removeFromCart(${index})" style="background: none; border: none; color: var(--error); cursor: pointer;"><i data-lucide="trash-2" style="width: 18px;"></i></button>
+                    </div>
+                `;
+                itemsContainer.appendChild(div);
+            });
+
+            document.getElementById('cart-total-amount').innerText = total.toLocaleString('en-IN');
+            document.getElementById('pay-amount-btn').innerText = total.toLocaleString('en-IN');
+            lucide.createIcons();
+        }
+
+        function removeFromCart(index) {
+            cart.splice(index, 1);
+            document.getElementById("cartCount").innerText = cart.length;
+            renderCart();
+        }
+
+        function showPage(pageId) {
+            document.querySelectorAll('.page').forEach(p => {
+                p.classList.remove('active');
+                p.style.display = 'none';
+            });
+            const target = document.getElementById(pageId);
+            target.style.display = 'block';
+            target.classList.add('active');
+            gsap.fromTo(target, { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.4 });
+        }
+
+        // Vault Payment Integration
+        async function handlePayment(e) {
+            e.preventDefault();
+            const cardNum = document.getElementById('card-number').value.replace(/-/g, '');
+
+            if (cardNum !== MAGIC_CARD) {
+                alert("Demo Mode: Please use the magic card number 1234-5678-9012-3456");
+                return;
+            }
+
+            document.getElementById('status-loading').style.display = 'block';
+            document.getElementById('status-success').style.display = 'none';
+            document.getElementById('status-error').style.display = 'none';
+            showPage('status-page');
+            
+            const totalAmount = cart.reduce((sum, item) => sum + item.price, 0);
+
+            try {
+                await fetch(`${BACKEND_URL}/initiate-payment`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        cardNumber: cardNum, 
+                        gameName: 'Amazon Commerce', 
+                        amount: totalAmount 
+                    })
+                });
+            } catch (err) {
+                showError("Connection failed. Check your network.");
+            }
+        }
+
+        socket.on("status_update", (data) => {
+            if (document.getElementById('status-page').classList.contains('active')) {
+                if (data.status === 'approved') {
+                    confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 }, colors: ['#ff9900', '#fff'] });
+                    document.getElementById('status-loading').style.display = 'none';
+                    document.getElementById('status-success').style.display = 'block';
+                    gsap.from('#status-success', { scale: 0.9, opacity: 0, duration: 0.5 });
+                } else if (data.status === 'declined') {
+                    showError("Payment was declined by the authorization provider.");
+                }
+            }
+        });
+
+        function showError(msg) {
+            document.getElementById('status-loading').style.display = 'none';
+            document.getElementById('status-error').style.display = 'block';
+            document.getElementById('error-message').textContent = msg;
+            gsap.from('#status-error', { x: 10, repeat: 4, yoyo: true, duration: 0.05 });
+        }
+
+        function clearCartAndHome() {
+            cart = [];
+            document.getElementById("cartCount").innerText = "0";
+            renderCart();
+            showPage('products-page');
+        }
+
+    </script>
+</body>
+</html>
